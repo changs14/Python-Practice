@@ -1,2 +1,2 @@
 # Python-Projects
-Personal python projects
+Small personal python projects
