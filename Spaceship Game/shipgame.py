@@ -8,6 +8,7 @@ import sys
 import pygame
 from ufo import UFO
 from settings import Settings
+from ammo import Ammo
 
 class StarShip:
     """General class containing game assets and behaviour"""
@@ -23,6 +24,9 @@ class StarShip:
         
         #UFO object
         self.ufo = UFO(self)
+
+        #Ammo object
+        self.ammos = pygame.sprite.Group()
         
     def events(self):
         """Check if the game is running or not"""
@@ -40,6 +44,8 @@ class StarShip:
             self.ufo.moving_right = True
         elif event.key == pygame.K_LEFT:
             self.ufo.moving_left = True
+        elif event.key == pygame.K_SPACE:
+            self.fire() #Fire a bullet
         elif event.key == pygame.K_q:
             sys.exit()
     
@@ -48,13 +54,35 @@ class StarShip:
         if event.key == pygame.K_RIGHT:
             self.ufo.moving_right = False
         elif event.key == pygame.K_LEFT:
-            self.ufo.moving_left = False            
+            self.ufo.moving_left = False         
+
+    def fire(self):
+        """Creates a bullet and adds to the group"""
+        #Users may shoot 4 bullets in a fixed interval
+        if len(self.ammos) < self.settings.ammo_limit:
+            new_ammo = Ammo(self)
+            self.ammos.add(new_ammo)
                     
+    def bullet_update(self):
+        """Function that will update all bullets on screen"""
+        
+        #Update positions
+        self.ammos.update()
+
+        #Clear bullets that have disappeared
+        for ammo in self.ammos.copy():
+            if ammo.rect.bottom <= 0:
+                self.ammos.remove(ammo)
+
     def update(self):
         """Update and draw the current screen"""
         #Draw most current screen
         self.screen.fill(self.settings.bg_color) #Draw the background colour
         self.ufo.blitme()
+
+        #Draw bullet to screen
+        for ammo in self.ammos.sprites():
+            ammo.draw()
 
          #Display the current screen
         pygame.display.flip()
@@ -64,6 +92,7 @@ class StarShip:
         while True:
             self.events() #Check if the game is running
             self.ufo.update() #Update the position of the ufo based on key presses
+            self.bullet_update()
             self.update() #Update the screen
             
 if __name__ == '__main__':

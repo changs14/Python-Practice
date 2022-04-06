@@ -1,3 +1,6 @@
+import ssl
+
+
 class Settings:
     """Store settings for the game"""
     
@@ -7,3 +10,10 @@ class Settings:
         self.bg_color = (249, 255, 228) #Screen background colour
         self.bg_color = (249, 255, 228) #Screen background colour
         self.ship_speed = 1.2 #Movementspeed of the ufo
+
+        #Ammo settings
+        self.ammo_speed = 1.0 #Projectile speed
+        self.ammo_width = 3
+        self.ammo_height = 15
+        self.ammo_colour = (60,60,60)
+        self.ammo_limit = 4

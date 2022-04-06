@@ -31,11 +31,12 @@ class UFO:
         #Check if the ufo is moving and not beyond the screen
         if self.moving_right and (self.rect.right<self.screen_rect.right):
             self.x += self.settings.ship_speed
-        if self.moving_left and (self.rect.left > 0):
+
+        if self.moving_left and self.rect.left > 0:
             self.x -= self.settings.ship_speed
             
-            #Rect object is now the new x value
-            self.rect.x = self.x
+        #Rect object is now the new x value
+        self.rect.x = self.x
         
     def blitme(self):
         #Draws the current position of the uFO
