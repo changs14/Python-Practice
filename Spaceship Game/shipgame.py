@@ -9,6 +9,7 @@ import pygame
 from ufo import UFO
 from settings import Settings
 from ammo import Ammo
+from bubble import Bubble
 
 class StarShip:
     """General class containing game assets and behaviour"""
@@ -27,6 +28,21 @@ class StarShip:
 
         #Ammo object
         self.ammos = pygame.sprite.Group()
+
+        #Bubble object
+        self.bubbles = pygame.sprite.Group()
+        self.lots_of_bubbles()
+
+    def lots_of_bubbles(self):
+        """Generate a lot of bubbles"""
+        bubble = Bubble(self)
+        bubble_width = alien.rect.width
+        space_x = self.settings.screen_width - (2 * bubble_width)
+        bubble_count = space_x // (2*bubble_width)
+
+        #Create a row of bubbles
+        for n
+
         
     def events(self):
         """Check if the game is running or not"""
@@ -79,6 +95,8 @@ class StarShip:
         #Draw most current screen
         self.screen.fill(self.settings.bg_color) #Draw the background colour
         self.ufo.blitme()
+
+        self.bubbles.draw(self.screen)
 
         #Draw bullet to screen
         for ammo in self.ammos.sprites():
