@@ -36,12 +36,17 @@ class StarShip:
     def lots_of_bubbles(self):
         """Generate a lot of bubbles"""
         bubble = Bubble(self)
-        bubble_width = alien.rect.width
-        space_x = self.settings.screen_width - (2 * bubble_width)
+        bubble_width = bubble.rect.width
+        space_x = self.settings.width - (2 * bubble_width)
         bubble_count = space_x // (2*bubble_width)
 
         #Create a row of bubbles
-        for n
+        for num_of_bubbles in range(bubble_count):
+            #Create bubble imagine in current row
+            bubble = Bubble(self)
+            bubble.x = bubble_width + 2 * bubble_width * num_of_bubbles
+            bubble.rect.x = bubble.x
+            self.bubbles.add(bubble)
 
         
     def events(self):
