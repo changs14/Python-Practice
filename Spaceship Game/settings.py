@@ -1,6 +1,5 @@
 import ssl
 
-
 class Settings:
     """Store settings for the game"""
     
@@ -17,3 +16,8 @@ class Settings:
         self.ammo_height = 15
         self.ammo_colour = (60,60,60)
         self.ammo_limit = 4
+
+        #Bubble settings
+        self.bubble_speed = 1.0
+        self.drop_speed = 10
+        self.direction = 1

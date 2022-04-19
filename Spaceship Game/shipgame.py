@@ -2,7 +2,9 @@
 """The player controls a UFO at the bottom of the screen. They may move left and right
     using the left and right arrow keys and shoot using the space bar. Players must shoot
     the falling stars before it hits the player. If all stars are cleared, a new fleet will
-    spawn at faster speed. If a player gets hit three times by the stars, the game is over."""
+    spawn at faster speed. If a player gets hit three times by the stars, the game is over.
+    
+    Usage in console: python shipgame.py"""
 
 import sys
 import pygame
@@ -36,19 +38,47 @@ class StarShip:
     def lots_of_bubbles(self):
         """Generate a lot of bubbles"""
         bubble = Bubble(self)
-        bubble_width = bubble.rect.width
+        bubble_width, bubble_height =  bubble.rect.size
         space_x = self.settings.width - (2 * bubble_width)
         bubble_count = space_x // (2*bubble_width)
 
-        #Create a row of bubbles
-        for num_of_bubbles in range(bubble_count):
-            #Create bubble imagine in current row
-            bubble = Bubble(self)
-            bubble.x = bubble_width + 2 * bubble_width * num_of_bubbles
-            bubble.rect.x = bubble.x
-            self.bubbles.add(bubble)
+        #Height of available space that bubbles can fit on screen
+        ufo_height = self.ufo.rect.height
+        space_y = (self.settings.height - bubble_height - ufo_height)
+        num_rows = space_y // (2*bubble_height)
 
+        #Create a row of bubbles
+        for row in range(num_rows):
+            for num_of_bubbles in range(bubble_count):
+                self.create_bubble(num_of_bubbles, row)
+
+    def create_bubble(self, num_of_bubbles, row):
+        """Create a bubble object"""
+        #Create bubble imagine in current row
+        bubble = Bubble(self)
+        bubble_width, bubble_height = bubble.rect.size
+        bubble.x = bubble_width + 2 * bubble_width * num_of_bubbles
+        bubble.rect.x = bubble.x
+        bubble.rect.y = bubble.rect.height + 2* bubble.rect.height * row
+        self.bubbles.add(bubble)
         
+    def update_bubbles(self):
+        self.check_edges()
+        self.bubbles.update()
+
+    def check_edges(self):
+        """"Check if bubbles reached the edge of the screen"""
+        for bubble in self.bubbles.sprites():
+            if bubble.check_edges():
+                self.change_directions()
+                break
+
+    def change_directions(self):
+        """Drop row position and change the horizontal movement"""
+        for bubble in self.bubbles.sprites():
+            bubble.rect.y += self.settings.drop_speed
+        self.settings.direction *= -1
+
     def events(self):
         """Check if the game is running or not"""
         for event in pygame.event.get():
@@ -95,6 +125,9 @@ class StarShip:
             if ammo.rect.bottom <= 0:
                 self.ammos.remove(ammo)
 
+        #Check for object collisions
+        collisions = pygame.sprite.groupcollide(self.ammos, self.bubbles, True, True)
+
     def update(self):
         """Update and draw the current screen"""
         #Draw most current screen
@@ -116,6 +149,7 @@ class StarShip:
             self.events() #Check if the game is running
             self.ufo.update() #Update the position of the ufo based on key presses
             self.bullet_update()
+            self.update_bubbles()
             self.update() #Update the screen
             
 if __name__ == '__main__':
