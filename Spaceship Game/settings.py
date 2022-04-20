@@ -9,6 +9,7 @@ class Settings:
         self.bg_color = (249, 255, 228) #Screen background colour
         self.bg_color = (249, 255, 228) #Screen background colour
         self.ship_speed = 1.2 #Movementspeed of the ufo
+        self.ship_lives = 3
 
         #Ammo settings
         self.ammo_speed = 1.0 #Projectile speed

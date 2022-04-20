@@ -41,3 +41,8 @@ class UFO:
     def blitme(self):
         #Draws the current position of the uFO
         self.screen.blit(self.image, self.rect)
+
+    def center_ship(self):
+        """Center the ship on the screen when hit"""
+        self.rect.midbottom = self.screen_rect.midbottom
+        self.x = float(self.rect.x)

@@ -7,11 +7,15 @@
     Usage in console: python shipgame.py"""
 
 import sys
+from time import sleep
+
 import pygame
+
 from ufo import UFO
 from settings import Settings
 from ammo import Ammo
 from bubble import Bubble
+from stats import Stats
 
 class StarShip:
     """General class containing game assets and behaviour"""
@@ -23,6 +27,7 @@ class StarShip:
         #Create game window and display game title in the top bar
         self.settings = Settings() #Get game settings
         self.screen = pygame.display.set_mode((self.settings.width, self.settings.height)) #Get game display
+        self.stats = Stats(self)
         pygame.display.set_caption("Star Ship") #Top bar title
         
         #UFO object
@@ -66,6 +71,9 @@ class StarShip:
         self.check_edges()
         self.bubbles.update()
 
+        if pygame.sprite.spritecollideany(self.ufo, self.bubbles):
+            self.hit()
+
     def check_edges(self):
         """"Check if bubbles reached the edge of the screen"""
         for bubble in self.bubbles.sprites():
@@ -73,11 +81,37 @@ class StarShip:
                 self.change_directions()
                 break
 
+    def check_bottom(self):
+        """Check if bubbles reached the bottom of the screen"""
+        screen_rect = self.screen.get_rect()
+        for bubble in self.bubbles.sprites():
+            if bubble.rect.bottom >= screen_rect.bottom:
+                self.hit()
+                break
+
     def change_directions(self):
         """Drop row position and change the horizontal movement"""
         for bubble in self.bubbles.sprites():
             bubble.rect.y += self.settings.drop_speed
         self.settings.direction *= -1
+
+    def hit(self):
+        """When ship gets hit by a bubble"""
+        #Take away one life of ship
+        if self.stats.ship_lives >0:
+            self.stats.ship_lives -= 1
+
+            self.bubbles.empty()
+            self.ammos.empty()
+
+            self.create_bubble()
+            self.ufo.center_ship()
+
+            #Pause
+            sleep(0.5)
+
+        else:
+            self.stats.active = False
 
     def events(self):
         """Check if the game is running or not"""
@@ -147,9 +181,12 @@ class StarShip:
         """Run the main game loop"""
         while True:
             self.events() #Check if the game is running
-            self.ufo.update() #Update the position of the ufo based on key presses
-            self.bullet_update()
-            self.update_bubbles()
+
+            if self.stats.active:
+                self.ufo.update() #Update the position of the ufo based on key presses
+                self.bullet_update()
+                self.update_bubbles()
+            
             self.update() #Update the screen
             
 if __name__ == '__main__':
