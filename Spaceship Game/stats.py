@@ -5,7 +5,7 @@ class Stats:
         """"Initialize statistics"""
         self.settings = game.settings
         self.reset()
-        self.active = True
+        self.active = False
 
     def reset(self):
         self.remaining_tries = self.settings

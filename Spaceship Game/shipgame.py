@@ -16,6 +16,7 @@ from settings import Settings
 from ammo import Ammo
 from bubble import Bubble
 from stats import Stats
+from button import Button
 
 class StarShip:
     """General class containing game assets and behaviour"""
@@ -30,6 +31,9 @@ class StarShip:
         self.stats = Stats(self)
         pygame.display.set_caption("Star Ship") #Top bar title
         
+        #Button object
+        self.start_button = Button(self, "Start")
+
         #UFO object
         self.ufo = UFO(self)
 
@@ -173,6 +177,10 @@ class StarShip:
         #Draw bullet to screen
         for ammo in self.ammos.sprites():
             ammo.draw()
+            
+        #Show start button if game is in an inactive state
+        if not self.stats.active:
+            self.start_button.create_button()
 
          #Display the current screen
         pygame.display.flip()
