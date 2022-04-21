@@ -17,6 +17,7 @@ from ammo import Ammo
 from bubble import Bubble
 from stats import Stats
 from button import Button
+from score import Scoreboard
 
 class StarShip:
     """General class containing game assets and behaviour"""
@@ -116,6 +117,20 @@ class StarShip:
 
         else:
             self.stats.active = False
+    
+    def check_button(self, pos):
+        """Start new game when player clicks the start button"""
+        clicked = self.start_button.rect.collidepoint(pos)
+        if clicked and not self.stats.active:
+            self.settings.init_dynamic_settings()
+            self.stats.reset()
+            self.bubbles.empty()
+            self.ammos.empty()
+            self.lots_of_bubbles()
+            self.ufo.center_ship()
+
+            #Play the game
+            self.stats.active = True
 
     def events(self):
         """Check if the game is running or not"""
@@ -126,6 +141,9 @@ class StarShip:
                     self._check_keydown(event)
                 elif event.type == pygame.KEYUP:
                     self._check_keyup(event)
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    pos = pygame.mouse.get_pos()
+                    self.check_button(pos)
                     
     def _check_keydown(self, event):
         """Check for keydown events"""
@@ -165,6 +183,10 @@ class StarShip:
 
         #Check for object collisions
         collisions = pygame.sprite.groupcollide(self.ammos, self.bubbles, True, True)
+
+        if not self.bubbles:
+            self.ammos.empty()
+            self.lots_of_bubbles()
 
     def update(self):
         """Update and draw the current screen"""

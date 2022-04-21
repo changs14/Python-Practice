@@ -15,7 +15,7 @@ class Button:
         
         #Create button object
         self.rect = pygame.Rect(0,0, self.width, self.height)
-        self.rect.centre = self.screen_rect.center
+        self.rect.center = self.screen_rect.center
         
         self.create_message(message)
         
