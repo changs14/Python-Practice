@@ -1,12 +1,14 @@
 """All attributes to the user-controlled UFO"""
 
 import pygame
+from pygame.sprite import Sprite
 
-class UFO:
+class UFO(Sprite):
     """Load ship image and management"""
     
     def __init__(self, game):
         #Initialize the UFO
+        super().__init__()
         self.screen = game.screen
         self.screen_rect = game.screen.get_rect()
         self.settings = game.settings

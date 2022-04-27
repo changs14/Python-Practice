@@ -45,6 +45,8 @@ class StarShip:
         self.bubbles = pygame.sprite.Group()
         self.lots_of_bubbles()
 
+        self.sb = Scoreboard(self)
+
     def lots_of_bubbles(self):
         """Generate a lot of bubbles"""
         bubble = Bubble(self)
@@ -103,13 +105,14 @@ class StarShip:
     def hit(self):
         """When ship gets hit by a bubble"""
         #Take away one life of ship
-        if self.stats.ship_lives >0:
-            self.stats.ship_lives -= 1
+        if self.stats.remaining_tries >0:
+            self.stats.remaining_tries -= 1
+            self.sb.set_ships()
 
             self.bubbles.empty()
             self.ammos.empty()
 
-            self.create_bubble()
+            self.update_bubbles()
             self.ufo.center_ship()
 
             #Pause
@@ -131,6 +134,9 @@ class StarShip:
 
             #Play the game
             self.stats.active = True
+            self.sb.set_score()
+            self.sb.set_level()
+            self.sb.set_ships()
 
     def events(self):
         """Check if the game is running or not"""
@@ -184,9 +190,18 @@ class StarShip:
         #Check for object collisions
         collisions = pygame.sprite.groupcollide(self.ammos, self.bubbles, True, True)
 
+        if collisions:
+            for bubbles in collisions.values():
+                self.stats.score += self.settings.points * len(bubbles)
+            self.sb.create_score()
+            self.sb.check_high_score()
+
         if not self.bubbles:
             self.ammos.empty()
             self.lots_of_bubbles()
+            self.settings.speedup()
+            self.stats.level += 1
+            self.sb.set_level()
 
     def update(self):
         """Update and draw the current screen"""
@@ -195,14 +210,17 @@ class StarShip:
         self.ufo.blitme()
 
         self.bubbles.draw(self.screen)
-
-        #Draw bullet to screen
-        for ammo in self.ammos.sprites():
-            ammo.draw()
             
         #Show start button if game is in an inactive state
         if not self.stats.active:
             self.start_button.create_button()
+
+        #Draw scoreboard on screen
+        self.sb.display_score()
+
+        #Draw bullet to screen
+        for ammo in self.ammos.sprites():
+            ammo.draw()
 
          #Display the current screen
         pygame.display.flip()
